@@ -66,7 +66,7 @@ public abstract class AbstractBedrockRuntimeClientTest extends AbstractBaseAwsCl
           "{\"choices\":[{\"finish_reason\":\"stop\"}],\"usage\":{\"prompt_tokens\":5,\"completion_tokens\":42}}",
           asList(
               equalTo(stringKey("gen_ai.request.model"), "ai21.jamba-1-5-mini-v1:0"),
-              equalTo(stringKey("gen_ai.system"), "aws_bedrock"),
+              equalTo(stringKey("gen_ai.system"), "aws.bedrock"),
               equalTo(stringKey("gen_ai.request.max_tokens"), "1000"),
               equalTo(stringKey("gen_ai.request.temperature"), "0.7"),
               equalTo(stringKey("gen_ai.request.top_p"), "0.8"),
@@ -80,7 +80,7 @@ public abstract class AbstractBedrockRuntimeClientTest extends AbstractBaseAwsCl
           "{\"inputTextTokenCount\":5,\"results\":[{\"tokenCount\":42,\"outputText\":\"Hi! I'm Titan, an AI assistant.\",\"completionReason\":\"stop\"}]}",
           asList(
               equalTo(stringKey("gen_ai.request.model"), "amazon.titan-text-premier-v1:0"),
-              equalTo(stringKey("gen_ai.system"), "aws_bedrock"),
+              equalTo(stringKey("gen_ai.system"), "aws.bedrock"),
               equalTo(stringKey("gen_ai.request.max_tokens"), "100"),
               equalTo(stringKey("gen_ai.request.temperature"), "0.7"),
               equalTo(stringKey("gen_ai.request.top_p"), "0.9"),
@@ -95,7 +95,7 @@ public abstract class AbstractBedrockRuntimeClientTest extends AbstractBaseAwsCl
           asList(
               equalTo(
                   stringKey("gen_ai.request.model"), "anthropic.claude-3-5-sonnet-20241022-v2:0"),
-              equalTo(stringKey("gen_ai.system"), "aws_bedrock"),
+              equalTo(stringKey("gen_ai.system"), "aws.bedrock"),
               equalTo(stringKey("gen_ai.request.max_tokens"), "100"),
               equalTo(stringKey("gen_ai.request.temperature"), "0.7"),
               equalTo(stringKey("gen_ai.request.top_p"), "0.9"),
@@ -109,7 +109,7 @@ public abstract class AbstractBedrockRuntimeClientTest extends AbstractBaseAwsCl
           "{\"prompt_token_count\":2095,\"generation_token_count\":503,\"stop_reason\":\"stop\"}",
           asList(
               equalTo(stringKey("gen_ai.request.model"), "meta.llama3-70b-instruct-v1:0"),
-              equalTo(stringKey("gen_ai.system"), "aws_bedrock"),
+              equalTo(stringKey("gen_ai.system"), "aws.bedrock"),
               equalTo(stringKey("gen_ai.request.max_tokens"), "128"),
               equalTo(stringKey("gen_ai.request.temperature"), "0.1"),
               equalTo(stringKey("gen_ai.request.top_p"), "0.9"),
@@ -123,7 +123,7 @@ public abstract class AbstractBedrockRuntimeClientTest extends AbstractBaseAwsCl
           "{\"text\":\"test-output\",\"finish_reason\":\"COMPLETE\"}",
           asList(
               equalTo(stringKey("gen_ai.request.model"), "cohere.command-r-v1:0"),
-              equalTo(stringKey("gen_ai.system"), "aws_bedrock"),
+              equalTo(stringKey("gen_ai.system"), "aws.bedrock"),
               equalTo(stringKey("gen_ai.request.max_tokens"), "4096"),
               equalTo(stringKey("gen_ai.request.temperature"), "0.8"),
               equalTo(stringKey("gen_ai.request.top_p"), "0.45"),
