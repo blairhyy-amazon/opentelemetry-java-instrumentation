@@ -8,6 +8,7 @@ package io.opentelemetry.instrumentation.awssdk.v2_2.internal;
 import static io.opentelemetry.instrumentation.awssdk.v2_2.internal.AwsExperimentalAttributes.GEN_AI_SYSTEM;
 import static io.opentelemetry.instrumentation.awssdk.v2_2.internal.AwsSdkRequestType.BEDROCKRUNTIME;
 import static io.opentelemetry.instrumentation.awssdk.v2_2.internal.AwsSdkRequestType.DYNAMODB;
+import static java.util.logging.Level.INFO;
 
 import io.opentelemetry.api.common.AttributeKey;
 import io.opentelemetry.api.common.Attributes;
@@ -29,6 +30,7 @@ import java.nio.charset.Charset;
 import java.time.Instant;
 import java.util.Optional;
 import java.util.stream.Collectors;
+import java.util.logging.Logger;
 import javax.annotation.Nullable;
 import software.amazon.awssdk.auth.signer.AwsSignerExecutionAttribute;
 import software.amazon.awssdk.awscore.AwsResponse;
@@ -62,7 +64,7 @@ public final class TracingExecutionInterceptor implements ExecutionInterceptor {
   // copied from AwsIncubatingAttributes
   private static final AttributeKey<String> AWS_REQUEST_ID =
       AttributeKey.stringKey("aws.request_id");
-
+  private static final Logger logger = Logger.getLogger(TracingExecutionInterceptor.class.getName());
   // the class name is part of the attribute name, so that it will be shaded when used in javaagent
   // instrumentation, and won't conflict with usage outside javaagent instrumentation
   private static final ExecutionAttribute<io.opentelemetry.context.Context> CONTEXT_ATTRIBUTE =
@@ -260,6 +262,8 @@ public final class TracingExecutionInterceptor implements ExecutionInterceptor {
       // No context, no sense in doing anything else (but this is not expected)
       return;
     }
+    String accessKeyId = executionAttributes.getAttribute(AwsSignerExecutionAttribute.AWS_CREDENTIALS).accessKeyId();
+    logger.log(INFO,"access key id: {0}", accessKeyId);
 
     SdkHttpRequest httpRequest = context.httpRequest();
     executionAttributes.putAttribute(SDK_HTTP_REQUEST_ATTRIBUTE, httpRequest);
