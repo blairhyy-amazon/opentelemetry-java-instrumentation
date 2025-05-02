@@ -13,7 +13,9 @@ import static io.opentelemetry.instrumentation.awssdk.v1_11.AwsExperimentalAttri
 import static io.opentelemetry.instrumentation.awssdk.v1_11.AwsExperimentalAttributes.AWS_ENDPOINT;
 import static io.opentelemetry.instrumentation.awssdk.v1_11.AwsExperimentalAttributes.AWS_GUARDRAIL_ARN;
 import static io.opentelemetry.instrumentation.awssdk.v1_11.AwsExperimentalAttributes.AWS_GUARDRAIL_ID;
+import static io.opentelemetry.instrumentation.awssdk.v1_11.AwsExperimentalAttributes.AWS_KINESIS_STREAM_ARN;
 import static io.opentelemetry.instrumentation.awssdk.v1_11.AwsExperimentalAttributes.AWS_KNOWLEDGE_BASE_ID;
+import static io.opentelemetry.instrumentation.awssdk.v1_11.AwsExperimentalAttributes.AWS_LAMBDA_ARN;
 import static io.opentelemetry.instrumentation.awssdk.v1_11.AwsExperimentalAttributes.AWS_LAMBDA_NAME;
 import static io.opentelemetry.instrumentation.awssdk.v1_11.AwsExperimentalAttributes.AWS_LAMBDA_RESOURCE_ID;
 import static io.opentelemetry.instrumentation.awssdk.v1_11.AwsExperimentalAttributes.AWS_QUEUE_NAME;
@@ -23,6 +25,7 @@ import static io.opentelemetry.instrumentation.awssdk.v1_11.AwsExperimentalAttri
 import static io.opentelemetry.instrumentation.awssdk.v1_11.AwsExperimentalAttributes.AWS_STATE_MACHINE_ARN;
 import static io.opentelemetry.instrumentation.awssdk.v1_11.AwsExperimentalAttributes.AWS_STEP_FUNCTIONS_ACTIVITY_ARN;
 import static io.opentelemetry.instrumentation.awssdk.v1_11.AwsExperimentalAttributes.AWS_STREAM_NAME;
+import static io.opentelemetry.instrumentation.awssdk.v1_11.AwsExperimentalAttributes.AWS_TABLE_ARN;
 import static io.opentelemetry.instrumentation.awssdk.v1_11.AwsExperimentalAttributes.AWS_TABLE_NAME;
 import static io.opentelemetry.instrumentation.awssdk.v1_11.AwsExperimentalAttributes.GEN_AI_REQUEST_MAX_TOKENS;
 import static io.opentelemetry.instrumentation.awssdk.v1_11.AwsExperimentalAttributes.GEN_AI_REQUEST_TEMPERATURE;
@@ -61,6 +64,7 @@ class AwsSdkExperimentalAttributesExtractor
     setAttribute(attributes, AWS_QUEUE_NAME, originalRequest, RequestAccess::getQueueName);
     setAttribute(attributes, AWS_STREAM_NAME, originalRequest, RequestAccess::getStreamName);
     setAttribute(attributes, AWS_TABLE_NAME, originalRequest, RequestAccess::getTableName);
+    setAttribute(attributes, AWS_TABLE_ARN, originalRequest, RequestAccess::getTableArn);
     setAttribute(
         attributes, AWS_STATE_MACHINE_ARN, originalRequest, RequestAccess::getStateMachineArn);
     setAttribute(
@@ -71,8 +75,10 @@ class AwsSdkExperimentalAttributesExtractor
     setAttribute(attributes, AWS_SNS_TOPIC_ARN, originalRequest, RequestAccess::getSnsTopicArn);
     setAttribute(attributes, AWS_SECRET_ARN, originalRequest, RequestAccess::getSecretArn);
     setAttribute(attributes, AWS_LAMBDA_NAME, originalRequest, RequestAccess::getLambdaName);
+    setAttribute(attributes, AWS_LAMBDA_ARN, originalRequest, RequestAccess::getLambdaArn);
     setAttribute(
         attributes, AWS_LAMBDA_RESOURCE_ID, originalRequest, RequestAccess::getLambdaResourceId);
+    setAttribute(attributes, AWS_KINESIS_STREAM_ARN, originalRequest, RequestAccess::getKinesisStreamArn);
     // Get serviceName defined in the AWS Java SDK V1 Request class.
     String serviceName = request.getServiceName();
     // Extract request attributes only for Bedrock services.

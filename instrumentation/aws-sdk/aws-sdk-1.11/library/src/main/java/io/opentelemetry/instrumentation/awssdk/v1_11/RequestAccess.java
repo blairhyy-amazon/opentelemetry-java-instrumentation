@@ -252,6 +252,15 @@ final class RequestAccess {
   }
 
   @Nullable
+  static String getLambdaArn(Object request) {
+    if (request == null) {
+      return null;
+    }
+    RequestAccess access = REQUEST_ACCESSORS.get(request.getClass());
+    return findNestedAccessorOrNull(request, "getFunctionArn");
+  }
+
+  @Nullable
   static String getLambdaResourceId(Object request) {
     if (request == null) {
       return null;
@@ -339,6 +348,24 @@ final class RequestAccess {
     }
     RequestAccess access = REQUEST_ACCESSORS.get(request.getClass());
     return invokeOrNull(access.getTableName, request);
+  }
+
+  @Nullable
+  static String getTableArn(Object request) {
+    if (request == null) {
+      return null;
+    }
+    RequestAccess access = REQUEST_ACCESSORS.get(request.getClass());
+    return findNestedAccessorOrNull(request, "getTableArn");
+  }
+
+  @Nullable
+  static String getKinesisStreamArn(Object request) {
+    if (request == null) {
+      return null;
+    }
+    RequestAccess access = REQUEST_ACCESSORS.get(request.getClass());
+    return invokeOrNull(access.getKinesisStreamArn, request);
   }
 
   @Nullable
@@ -456,6 +483,7 @@ final class RequestAccess {
   @Nullable private final MethodHandle getSecretArn;
   @Nullable private final MethodHandle getLambdaName;
   @Nullable private final MethodHandle getLambdaResourceId;
+  @Nullable private final MethodHandle getKinesisStreamArn;
 
   private RequestAccess(Class<?> clz) {
     getBucketName = findAccessorOrNull(clz, "getBucketName", String.class);
@@ -477,6 +505,7 @@ final class RequestAccess {
     getSecretArn = findAccessorOrNull(clz, "getARN", String.class);
     getLambdaName = findAccessorOrNull(clz, "getFunctionName", String.class);
     getLambdaResourceId = findAccessorOrNull(clz, "getUUID", String.class);
+    getKinesisStreamArn = findAccessorOrNull(clz, "getStreamARN", String.class);
   }
 
   @Nullable
