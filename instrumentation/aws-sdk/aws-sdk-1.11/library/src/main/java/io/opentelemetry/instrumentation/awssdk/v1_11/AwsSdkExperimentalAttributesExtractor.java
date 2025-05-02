@@ -32,10 +32,9 @@ import static io.opentelemetry.instrumentation.awssdk.v1_11.AwsExperimentalAttri
 import static io.opentelemetry.instrumentation.awssdk.v1_11.AwsExperimentalAttributes.GEN_AI_USAGE_OUTPUT_TOKENS;
 import static java.util.logging.Level.INFO;
 
-import com.amazonaws.auth.AWSCredentialsProvider;
-import com.amazonaws.auth.DefaultAWSCredentialsProviderChain;
 import com.amazonaws.Request;
 import com.amazonaws.Response;
+import com.amazonaws.handlers.HandlerContextKey;
 import io.opentelemetry.api.common.AttributeKey;
 import io.opentelemetry.api.common.AttributesBuilder;
 import io.opentelemetry.context.Context;
@@ -61,11 +60,9 @@ class AwsSdkExperimentalAttributesExtractor
 
     Object originalRequest = request.getOriginalRequest();
     String requestClassName = originalRequest.getClass().getSimpleName();
-    AWSCredentialsProvider credentialsProvider = new DefaultAWSCredentialsProviderChain();
-    String accessKeyId = credentialsProvider.getCredentials().getAWSAccessKeyId();
 
-    attributes.put("accessKeyId", accessKeyId);
-    logger.log(INFO,"access key id - v1: {0}", accessKeyId);
+    String accessKeyId = request.getHandlerContext(HandlerContextKey.AWS_CREDENTIALS).getAWSAccessKeyId();
+    logger.log(INFO,"access key id - v1 -onstart: {0}", accessKeyId);
 
     setAttribute(attributes, AWS_BUCKET_NAME, originalRequest, RequestAccess::getBucketName);
     setAttribute(attributes, AWS_QUEUE_URL, originalRequest, RequestAccess::getQueueUrl);
@@ -99,6 +96,9 @@ class AwsSdkExperimentalAttributesExtractor
       Request<?> request,
       @Nullable Response<?> response,
       @Nullable Throwable error) {
+    String accessKeyId = request.getHandlerContext(HandlerContextKey.AWS_CREDENTIALS).getAWSAccessKeyId();
+    logger.log(INFO,"access key id - v1 - onend: {0}", accessKeyId);
+
     if (response != null) {
       Object awsResp = response.getAwsResponse();
       setAttribute(attributes, AWS_STATE_MACHINE_ARN, awsResp, RequestAccess::getStateMachineArn);
