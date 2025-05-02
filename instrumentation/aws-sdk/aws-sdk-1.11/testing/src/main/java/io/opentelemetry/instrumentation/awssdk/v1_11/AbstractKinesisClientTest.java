@@ -8,6 +8,7 @@ package io.opentelemetry.instrumentation.awssdk.v1_11;
 import com.amazonaws.services.kinesis.AmazonKinesis;
 import com.amazonaws.services.kinesis.AmazonKinesisClientBuilder;
 import com.amazonaws.services.kinesis.model.DeleteStreamRequest;
+import com.amazonaws.services.kinesis.model.DescribeStreamRequest;
 import com.google.common.collect.ImmutableMap;
 import io.opentelemetry.testing.internal.armeria.common.HttpResponse;
 import io.opentelemetry.testing.internal.armeria.common.HttpStatus;
@@ -15,6 +16,7 @@ import io.opentelemetry.testing.internal.armeria.common.MediaType;
 import java.util.Map;
 import java.util.function.Function;
 import java.util.stream.Stream;
+import org.junit.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
@@ -47,6 +49,44 @@ public abstract class AbstractKinesisClientTest extends AbstractBaseAwsClientTes
     assertRequestWithMockedResponse(
         response, client, "Kinesis", operation, "POST", additionalAttributes);
   }
+
+  @Test
+  public void sendRequestWithStreamArnMockedResponse() throws Exception {
+    // Step 1: Build Kinesis client with your configuration
+    AmazonKinesisClientBuilder clientBuilder = AmazonKinesisClientBuilder.standard();
+    AmazonKinesis client =
+        configureClient(clientBuilder)
+            .withEndpointConfiguration(endpoint)
+            .withCredentials(credentialsProvider)
+            .build();
+
+    // Step 2: Mock JSON response from DescribeStream with a StreamARN
+    String body = "{\n" +
+        "  \"StreamDescription\": {\n" +
+        "    \"StreamARN\": \"arn:aws:kinesis:us-east-1:123456789012:stream/somestream\",\n" +
+        "    \"StreamName\": \"somestream\",\n" +
+        "    \"StreamStatus\": \"ACTIVE\",\n" +
+        "    \"Shards\": []\n" +
+        "  }\n" +
+        "}";
+
+    server.enqueue(HttpResponse.of(HttpStatus.OK, MediaType.JSON_UTF_8, body));
+
+    // Step 3: Expected attributes to be asserted, including the stream ARN
+    Map<String, String> additionalAttributes = ImmutableMap.of(
+        "aws.stream.name", "somestream",
+        "aws.stream.arn", "arn:aws:kinesis:us-east-1:123456789012:stream/somestream"
+    );
+
+    // Step 4: Make the actual call to DescribeStream
+    Object response = client.describeStream(
+        new DescribeStreamRequest().withStreamName("somestream"));
+
+    // Step 5: Run standard request assertion
+    assertRequestWithMockedResponse(
+        response, client, "Kinesis", "DescribeStream", "POST", additionalAttributes);
+  }
+
 
   private static Stream<Arguments> provideArguments() {
     return Stream.of(

@@ -5,6 +5,8 @@
 
 package io.opentelemetry.instrumentation.awssdk.v2_2.internal;
 
+import static io.opentelemetry.instrumentation.awssdk.v2_2.internal.AwsExperimentalAttributes.AWS_REMOTE_RESOURCE_ACCESS_KEY;
+import static io.opentelemetry.instrumentation.awssdk.v2_2.internal.AwsExperimentalAttributes.AWS_REMOTE_RESOURCE_REGION;
 import static io.opentelemetry.instrumentation.awssdk.v2_2.internal.AwsExperimentalAttributes.GEN_AI_SYSTEM;
 import static io.opentelemetry.instrumentation.awssdk.v2_2.internal.AwsSdkRequestType.BEDROCKRUNTIME;
 import static io.opentelemetry.instrumentation.awssdk.v2_2.internal.AwsSdkRequestType.DYNAMODB;
@@ -263,6 +265,12 @@ public final class TracingExecutionInterceptor implements ExecutionInterceptor {
 
     SdkHttpRequest httpRequest = context.httpRequest();
     executionAttributes.putAttribute(SDK_HTTP_REQUEST_ATTRIBUTE, httpRequest);
+
+    String accessKeyId = executionAttributes.getAttribute(AwsSignerExecutionAttribute.AWS_CREDENTIALS).accessKeyId();
+    String region = executionAttributes.getAttribute(AwsSignerExecutionAttribute.SIGNING_REGION).toString();
+    Span span = Span.fromContext(otelContext);
+    span.setAttribute(AWS_REMOTE_RESOURCE_ACCESS_KEY, accessKeyId);
+    span.setAttribute(AWS_REMOTE_RESOURCE_REGION, region);
 
     // We ought to pass the parent of otelContext here, but we didn't store it, and it shouldn't
     // make a difference (unless we start supporting the http.resend_count attribute in this
