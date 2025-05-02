@@ -256,7 +256,6 @@ final class RequestAccess {
     if (request == null) {
       return null;
     }
-    RequestAccess access = REQUEST_ACCESSORS.get(request.getClass());
     return findNestedAccessorOrNull(request, "getFunctionArn");
   }
 
@@ -355,7 +354,6 @@ final class RequestAccess {
     if (request == null) {
       return null;
     }
-    RequestAccess access = REQUEST_ACCESSORS.get(request.getClass());
     return findNestedAccessorOrNull(request, "getTableArn");
   }
 
