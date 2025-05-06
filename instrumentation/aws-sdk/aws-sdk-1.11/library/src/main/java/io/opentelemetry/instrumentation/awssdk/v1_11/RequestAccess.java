@@ -358,12 +358,12 @@ final class RequestAccess {
   }
 
   @Nullable
-  static String getKinesisStreamArn(Object request) {
+  static String getStreamArn(Object request) {
     if (request == null) {
       return null;
     }
     RequestAccess access = REQUEST_ACCESSORS.get(request.getClass());
-    return invokeOrNull(access.getKinesisStreamArn, request);
+    return invokeOrNull(access.getStreamArn, request);
   }
 
   @Nullable
@@ -466,6 +466,7 @@ final class RequestAccess {
   @Nullable private final MethodHandle getQueueUrl;
   @Nullable private final MethodHandle getQueueName;
   @Nullable private final MethodHandle getStreamName;
+  @Nullable private final MethodHandle getStreamArn;
   @Nullable private final MethodHandle getTableName;
   @Nullable private final MethodHandle getTopicArn;
   @Nullable private final MethodHandle getTargetArn;
@@ -481,13 +482,13 @@ final class RequestAccess {
   @Nullable private final MethodHandle getSecretArn;
   @Nullable private final MethodHandle getLambdaName;
   @Nullable private final MethodHandle getLambdaResourceId;
-  @Nullable private final MethodHandle getKinesisStreamArn;
 
   private RequestAccess(Class<?> clz) {
     getBucketName = findAccessorOrNull(clz, "getBucketName", String.class);
     getQueueUrl = findAccessorOrNull(clz, "getQueueUrl", String.class);
     getQueueName = findAccessorOrNull(clz, "getQueueName", String.class);
     getStreamName = findAccessorOrNull(clz, "getStreamName", String.class);
+    getStreamArn = findAccessorOrNull(clz, "getStreamARN", String.class);
     getTableName = findAccessorOrNull(clz, "getTableName", String.class);
     getTopicArn = findAccessorOrNull(clz, "getTopicArn", String.class);
     getTargetArn = findAccessorOrNull(clz, "getTargetArn", String.class);
@@ -503,7 +504,6 @@ final class RequestAccess {
     getSecretArn = findAccessorOrNull(clz, "getARN", String.class);
     getLambdaName = findAccessorOrNull(clz, "getFunctionName", String.class);
     getLambdaResourceId = findAccessorOrNull(clz, "getUUID", String.class);
-    getKinesisStreamArn = findAccessorOrNull(clz, "getStreamARN", String.class);
   }
 
   @Nullable

@@ -16,6 +16,7 @@ final class AwsExperimentalAttributes {
   static final AttributeKey<String> AWS_QUEUE_URL = stringKey("aws.queue.url");
   static final AttributeKey<String> AWS_QUEUE_NAME = stringKey("aws.queue.name");
   static final AttributeKey<String> AWS_STREAM_NAME = stringKey("aws.stream.name");
+  static final AttributeKey<String> AWS_STREAM_ARN = stringKey("aws.stream.arn");
   static final AttributeKey<String> AWS_TABLE_NAME = stringKey("aws.table.name");
   static final AttributeKey<String> AWS_TABLE_ARN = stringKey("aws.table.arn");
   static final AttributeKey<String> AWS_AGENT_ID = stringKey("aws.bedrock.agent.id");
@@ -49,7 +50,6 @@ final class AwsExperimentalAttributes {
   static final AttributeKey<String> AWS_LAMBDA_ARN = stringKey("aws.lambda.function.arn");
   static final AttributeKey<String> AWS_LAMBDA_RESOURCE_ID =
       stringKey("aws.lambda.resource_mapping.id");
-  static final AttributeKey<String> AWS_KINESIS_STREAM_ARN = stringKey("aws.kinesis.stream.arn");
 
   private AwsExperimentalAttributes() {}
 }
