@@ -5,8 +5,8 @@
 
 package io.opentelemetry.instrumentation.awssdk.v2_2.internal;
 
-import static io.opentelemetry.instrumentation.awssdk.v2_2.internal.AwsExperimentalAttributes.AWS_ACCESS_KEY_ID;
-import static io.opentelemetry.instrumentation.awssdk.v2_2.internal.AwsExperimentalAttributes.AWS_SIGNING_REGION;
+import static io.opentelemetry.instrumentation.awssdk.v2_2.internal.AwsExperimentalAttributes.AWS_REMOTE_RESOURCE_ACCESS_KEY;
+import static io.opentelemetry.instrumentation.awssdk.v2_2.internal.AwsExperimentalAttributes.AWS_REMOTE_RESOURCE_REGION;
 import static io.opentelemetry.instrumentation.awssdk.v2_2.internal.AwsExperimentalAttributes.GEN_AI_SYSTEM;
 import static io.opentelemetry.instrumentation.awssdk.v2_2.internal.AwsSdkRequestType.BEDROCKRUNTIME;
 import static io.opentelemetry.instrumentation.awssdk.v2_2.internal.AwsSdkRequestType.DYNAMODB;
@@ -355,8 +355,8 @@ public final class TracingExecutionInterceptor implements ExecutionInterceptor {
     String accessKeyId = attributes.getAttribute(AwsSignerExecutionAttribute.AWS_CREDENTIALS).accessKeyId();
     String region = attributes.getAttribute(AwsSignerExecutionAttribute.SIGNING_REGION).toString();
 
-    span.setAttribute(AWS_ACCESS_KEY_ID, accessKeyId);
-    span.setAttribute(AWS_SIGNING_REGION, region);
+    span.setAttribute(AWS_REMOTE_RESOURCE_ACCESS_KEY, accessKeyId);
+    span.setAttribute(AWS_REMOTE_RESOURCE_REGION, region);
   }
 
   @Override

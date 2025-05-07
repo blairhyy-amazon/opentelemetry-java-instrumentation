@@ -50,7 +50,7 @@ final class AwsExperimentalAttributes {
   static final AttributeKey<String> AWS_LAMBDA_ARN = stringKey("aws.lambda.function.arn");
   static final AttributeKey<String> AWS_LAMBDA_RESOURCE_ID =
       stringKey("aws.lambda.resource_mapping.id");
-  static final AttributeKey<String> AWS_ACCESS_KEY_ID = stringKey("aws.access.key.id");
+  static final AttributeKey<String> AWS_REMOTE_RESOURCE_ACCESS_KEY = stringKey("aws.remote.resource.account.access_key");
 
   private AwsExperimentalAttributes() {}
 }
