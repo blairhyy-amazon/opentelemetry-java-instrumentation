@@ -5,6 +5,7 @@
 
 package io.opentelemetry.instrumentation.awssdk.v1_11;
 
+import static io.opentelemetry.instrumentation.awssdk.v1_11.AwsExperimentalAttributes.AWS_ACCESS_KEY_ID;
 import static io.opentelemetry.instrumentation.awssdk.v1_11.AwsExperimentalAttributes.AWS_AGENT;
 import static io.opentelemetry.instrumentation.awssdk.v1_11.AwsExperimentalAttributes.AWS_AGENT_ID;
 import static io.opentelemetry.instrumentation.awssdk.v1_11.AwsExperimentalAttributes.AWS_BEDROCK_RUNTIME_MODEL_ID;
@@ -33,7 +34,6 @@ import static io.opentelemetry.instrumentation.awssdk.v1_11.AwsExperimentalAttri
 import static io.opentelemetry.instrumentation.awssdk.v1_11.AwsExperimentalAttributes.GEN_AI_RESPONSE_FINISH_REASONS;
 import static io.opentelemetry.instrumentation.awssdk.v1_11.AwsExperimentalAttributes.GEN_AI_USAGE_INPUT_TOKENS;
 import static io.opentelemetry.instrumentation.awssdk.v1_11.AwsExperimentalAttributes.GEN_AI_USAGE_OUTPUT_TOKENS;
-import static java.util.logging.Level.INFO;
 
 import com.amazonaws.Request;
 import com.amazonaws.Response;
@@ -44,7 +44,6 @@ import io.opentelemetry.context.Context;
 import io.opentelemetry.instrumentation.api.instrumenter.AttributesExtractor;
 import java.util.Objects;
 import java.util.function.Function;
-import java.util.logging.Logger;
 import javax.annotation.Nullable;
 
 class AwsSdkExperimentalAttributesExtractor
@@ -54,7 +53,6 @@ class AwsSdkExperimentalAttributesExtractor
   private static final String BEDROCK_AGENT_SERVICE = "AWSBedrockAgent";
   private static final String BEDROCK_AGENT_RUNTIME_SERVICE = "AWSBedrockAgentRuntime";
   private static final String BEDROCK_RUNTIME_SERVICE = "AmazonBedrockRuntime";
-  private static final Logger logger = Logger.getLogger(AwsSdkExperimentalAttributesExtractor.class.getName());
 
   @Override
   public void onStart(AttributesBuilder attributes, Context parentContext, Request<?> request) {
@@ -63,9 +61,7 @@ class AwsSdkExperimentalAttributesExtractor
 
     Object originalRequest = request.getOriginalRequest();
     String requestClassName = originalRequest.getClass().getSimpleName();
-
     String accessKeyId = request.getHandlerContext(HandlerContextKey.AWS_CREDENTIALS).getAWSAccessKeyId();
-    logger.log(INFO,"access key id - v1 -onstart: {0}", accessKeyId);
 
     setAttribute(attributes, AWS_BUCKET_NAME, originalRequest, RequestAccess::getBucketName);
     setAttribute(attributes, AWS_QUEUE_URL, originalRequest, RequestAccess::getQueueUrl);
@@ -87,6 +83,8 @@ class AwsSdkExperimentalAttributesExtractor
     setAttribute(attributes, AWS_LAMBDA_ARN, originalRequest, RequestAccess::getLambdaArn);
     setAttribute(
         attributes, AWS_LAMBDA_RESOURCE_ID, originalRequest, RequestAccess::getLambdaResourceId);
+    attributes.put(AWS_ACCESS_KEY_ID, accessKeyId);
+
     // Get serviceName defined in the AWS Java SDK V1 Request class.
     String serviceName = request.getServiceName();
     // Extract request attributes only for Bedrock services.
@@ -102,9 +100,6 @@ class AwsSdkExperimentalAttributesExtractor
       Request<?> request,
       @Nullable Response<?> response,
       @Nullable Throwable error) {
-    String accessKeyId = request.getHandlerContext(HandlerContextKey.AWS_CREDENTIALS).getAWSAccessKeyId();
-    logger.log(INFO,"access key id - v1 - onend: {0}", accessKeyId);
-
     if (response != null) {
       Object awsResp = response.getAwsResponse();
       setAttribute(attributes, AWS_STATE_MACHINE_ARN, awsResp, RequestAccess::getStateMachineArn);

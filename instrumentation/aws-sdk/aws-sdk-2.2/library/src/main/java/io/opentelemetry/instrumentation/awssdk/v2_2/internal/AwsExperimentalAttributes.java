@@ -63,6 +63,10 @@ final class AwsExperimentalAttributes {
 
   static final AttributeKey<String> AWS_TABLE_ARN = stringKey("aws.table.arn");
 
+  static final AttributeKey<String> AWS_ACCESS_KEY_ID = stringKey("aws.access.key.id");
+
+  static final AttributeKey<String> AWS_SIGNING_REGION = stringKey("aws.signing.region");
+
   static boolean isGenAiAttribute(String attributeKey) {
     return attributeKey.equals(GEN_AI_REQUEST_MAX_TOKENS.getKey())
         || attributeKey.equals(GEN_AI_REQUEST_TEMPERATURE.getKey())
