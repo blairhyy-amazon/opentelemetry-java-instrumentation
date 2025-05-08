@@ -69,7 +69,6 @@ class AwsSdkExperimentalAttributesExtractor
     setAttribute(attributes, AWS_STREAM_NAME, originalRequest, RequestAccess::getStreamName);
     setAttribute(attributes, AWS_STREAM_ARN, originalRequest, RequestAccess::getStreamArn);
     setAttribute(attributes, AWS_TABLE_NAME, originalRequest, RequestAccess::getTableName);
-    setAttribute(attributes, AWS_TABLE_ARN, originalRequest, RequestAccess::getTableArn);
     setAttribute(
         attributes, AWS_STATE_MACHINE_ARN, originalRequest, RequestAccess::getStateMachineArn);
     setAttribute(
@@ -80,7 +79,6 @@ class AwsSdkExperimentalAttributesExtractor
     setAttribute(attributes, AWS_SNS_TOPIC_ARN, originalRequest, RequestAccess::getSnsTopicArn);
     setAttribute(attributes, AWS_SECRET_ARN, originalRequest, RequestAccess::getSecretArn);
     setAttribute(attributes, AWS_LAMBDA_NAME, originalRequest, RequestAccess::getLambdaName);
-    setAttribute(attributes, AWS_LAMBDA_ARN, originalRequest, RequestAccess::getLambdaArn);
     setAttribute(
         attributes, AWS_LAMBDA_RESOURCE_ID, originalRequest, RequestAccess::getLambdaResourceId);
     attributes.put(AWS_REMOTE_RESOURCE_ACCESS_KEY, accessKeyId);
@@ -102,6 +100,8 @@ class AwsSdkExperimentalAttributesExtractor
       @Nullable Throwable error) {
     if (response != null) {
       Object awsResp = response.getAwsResponse();
+      setAttribute(attributes, AWS_TABLE_ARN, awsResp, RequestAccess::getTableArn);
+      setAttribute(attributes, AWS_LAMBDA_ARN, awsResp, RequestAccess::getLambdaArn);
       setAttribute(attributes, AWS_STATE_MACHINE_ARN, awsResp, RequestAccess::getStateMachineArn);
       setAttribute(
           attributes,

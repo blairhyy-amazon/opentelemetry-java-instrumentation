@@ -256,7 +256,7 @@ final class RequestAccess {
     if (request == null) {
       return null;
     }
-    return findNestedAccessorOrNull(request, "getFunctionArn");
+    return findNestedAccessorOrNull(request, "getConfiguration", "getFunctionArn");
   }
 
   @Nullable
@@ -354,7 +354,7 @@ final class RequestAccess {
     if (request == null) {
       return null;
     }
-    return findNestedAccessorOrNull(request, "getTableArn");
+    return findNestedAccessorOrNull(request, "getTable", "getTableArn");
   }
 
   @Nullable
