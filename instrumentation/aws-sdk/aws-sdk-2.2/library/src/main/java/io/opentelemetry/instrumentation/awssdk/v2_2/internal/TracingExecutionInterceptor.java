@@ -266,6 +266,12 @@ public final class TracingExecutionInterceptor implements ExecutionInterceptor {
     SdkHttpRequest httpRequest = context.httpRequest();
     executionAttributes.putAttribute(SDK_HTTP_REQUEST_ATTRIBUTE, httpRequest);
 
+    String accessKeyId = executionAttributes.getAttribute(AwsSignerExecutionAttribute.AWS_CREDENTIALS).accessKeyId();
+    String region = executionAttributes.getAttribute(AwsSignerExecutionAttribute.SIGNING_REGION).toString();
+    Span span = Span.fromContext(otelContext);
+    span.setAttribute(AWS_REMOTE_RESOURCE_ACCESS_KEY, accessKeyId);
+    span.setAttribute(AWS_REMOTE_RESOURCE_REGION, region);
+
     // We ought to pass the parent of otelContext here, but we didn't store it, and it shouldn't
     // make a difference (unless we start supporting the http.resend_count attribute in this
     // instrumentation, which, logically, we can't on this level of abstraction)
@@ -351,12 +357,6 @@ public final class TracingExecutionInterceptor implements ExecutionInterceptor {
     if (awsSdkRequest.type() == BEDROCKRUNTIME) {
       span.setAttribute(GEN_AI_SYSTEM, GEN_AI_SYSTEM_BEDROCK);
     }
-
-    String accessKeyId = attributes.getAttribute(AwsSignerExecutionAttribute.AWS_CREDENTIALS).accessKeyId();
-    String region = attributes.getAttribute(AwsSignerExecutionAttribute.SIGNING_REGION).toString();
-
-    span.setAttribute(AWS_REMOTE_RESOURCE_ACCESS_KEY, accessKeyId);
-    span.setAttribute(AWS_REMOTE_RESOURCE_REGION, region);
   }
 
   @Override
