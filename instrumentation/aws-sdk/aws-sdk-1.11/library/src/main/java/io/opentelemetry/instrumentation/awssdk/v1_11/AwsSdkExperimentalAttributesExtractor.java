@@ -5,6 +5,7 @@
 
 package io.opentelemetry.instrumentation.awssdk.v1_11;
 
+import static io.opentelemetry.instrumentation.awssdk.v1_11.AwsExperimentalAttributes.AWS_AUTH_ACCESS_KEY;
 import static io.opentelemetry.instrumentation.awssdk.v1_11.AwsExperimentalAttributes.AWS_AGENT;
 import static io.opentelemetry.instrumentation.awssdk.v1_11.AwsExperimentalAttributes.AWS_AGENT_ID;
 import static io.opentelemetry.instrumentation.awssdk.v1_11.AwsExperimentalAttributes.AWS_BEDROCK_RUNTIME_MODEL_ID;
@@ -13,7 +14,6 @@ import static io.opentelemetry.instrumentation.awssdk.v1_11.AwsExperimentalAttri
 import static io.opentelemetry.instrumentation.awssdk.v1_11.AwsExperimentalAttributes.AWS_ENDPOINT;
 import static io.opentelemetry.instrumentation.awssdk.v1_11.AwsExperimentalAttributes.AWS_GUARDRAIL_ARN;
 import static io.opentelemetry.instrumentation.awssdk.v1_11.AwsExperimentalAttributes.AWS_GUARDRAIL_ID;
-import static io.opentelemetry.instrumentation.awssdk.v1_11.AwsExperimentalAttributes.AWS_REMOTE_RESOURCE_ACCESS_KEY;
 import static io.opentelemetry.instrumentation.awssdk.v1_11.AwsExperimentalAttributes.AWS_STREAM_ARN;
 import static io.opentelemetry.instrumentation.awssdk.v1_11.AwsExperimentalAttributes.AWS_KNOWLEDGE_BASE_ID;
 import static io.opentelemetry.instrumentation.awssdk.v1_11.AwsExperimentalAttributes.AWS_LAMBDA_ARN;
@@ -37,6 +37,7 @@ import static io.opentelemetry.instrumentation.awssdk.v1_11.AwsExperimentalAttri
 
 import com.amazonaws.Request;
 import com.amazonaws.Response;
+import com.amazonaws.auth.AWSCredentials;
 import com.amazonaws.handlers.HandlerContextKey;
 import io.opentelemetry.api.common.AttributeKey;
 import io.opentelemetry.api.common.AttributesBuilder;
@@ -61,8 +62,14 @@ class AwsSdkExperimentalAttributesExtractor
 
     Object originalRequest = request.getOriginalRequest();
     String requestClassName = originalRequest.getClass().getSimpleName();
-    String accessKeyId = request.getHandlerContext(HandlerContextKey.AWS_CREDENTIALS).getAWSAccessKeyId();
 
+    AWSCredentials credentials = request.getHandlerContext(HandlerContextKey.AWS_CREDENTIALS);
+    if (credentials != null) {
+      String accessKeyId = credentials.getAWSAccessKeyId();
+      if (accessKeyId != null) {
+        attributes.put(AWS_AUTH_ACCESS_KEY, accessKeyId);
+      }
+    }
     setAttribute(attributes, AWS_BUCKET_NAME, originalRequest, RequestAccess::getBucketName);
     setAttribute(attributes, AWS_QUEUE_URL, originalRequest, RequestAccess::getQueueUrl);
     setAttribute(attributes, AWS_QUEUE_NAME, originalRequest, RequestAccess::getQueueName);
@@ -81,7 +88,6 @@ class AwsSdkExperimentalAttributesExtractor
     setAttribute(attributes, AWS_LAMBDA_NAME, originalRequest, RequestAccess::getLambdaName);
     setAttribute(
         attributes, AWS_LAMBDA_RESOURCE_ID, originalRequest, RequestAccess::getLambdaResourceId);
-    attributes.put(AWS_REMOTE_RESOURCE_ACCESS_KEY, accessKeyId);
 
     // Get serviceName defined in the AWS Java SDK V1 Request class.
     String serviceName = request.getServiceName();

@@ -63,9 +63,9 @@ final class AwsExperimentalAttributes {
 
   static final AttributeKey<String> AWS_TABLE_ARN = stringKey("aws.table.arn");
 
-  static final AttributeKey<String> AWS_REMOTE_RESOURCE_ACCESS_KEY = stringKey("aws.remote.resource.account.access_key");
+  static final AttributeKey<String> AWS_AUTH_ACCESS_KEY = stringKey("aws.auth.account.access_key");
 
-  static final AttributeKey<String> AWS_REMOTE_RESOURCE_REGION = stringKey("aws.remote.resource.region");
+  static final AttributeKey<String> AWS_AUTH_REGION = stringKey("aws.auth.region");
 
   static boolean isGenAiAttribute(String attributeKey) {
     return attributeKey.equals(GEN_AI_REQUEST_MAX_TOKENS.getKey())
