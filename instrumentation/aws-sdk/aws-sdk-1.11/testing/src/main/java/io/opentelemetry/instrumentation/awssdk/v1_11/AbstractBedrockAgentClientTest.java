@@ -5,16 +5,18 @@
 
 package io.opentelemetry.instrumentation.awssdk.v1_11;
 
+import static io.opentelemetry.api.common.AttributeKey.stringKey;
+import static io.opentelemetry.sdk.testing.assertj.OpenTelemetryAssertions.equalTo;
+import static java.util.Collections.singletonList;
+
 import com.amazonaws.services.bedrockagent.AWSBedrockAgent;
 import com.amazonaws.services.bedrockagent.AWSBedrockAgentClientBuilder;
 import com.amazonaws.services.bedrockagent.model.GetAgentRequest;
 import com.amazonaws.services.bedrockagent.model.GetDataSourceRequest;
 import com.amazonaws.services.bedrockagent.model.GetKnowledgeBaseRequest;
-import com.google.common.collect.ImmutableMap;
 import io.opentelemetry.testing.internal.armeria.common.HttpResponse;
 import io.opentelemetry.testing.internal.armeria.common.HttpStatus;
 import io.opentelemetry.testing.internal.armeria.common.MediaType;
-import java.util.Map;
 import org.junit.jupiter.api.Test;
 
 public abstract class AbstractBedrockAgentClientTest extends AbstractBaseAwsClientTest {
@@ -40,7 +42,7 @@ public abstract class AbstractBedrockAgentClientTest extends AbstractBaseAwsClie
         "AWSBedrockAgent",
         "GetAgent",
         "GET",
-        ImmutableMap.of("aws.bedrock.agent.id", "agentId"));
+        singletonList(equalTo(stringKey("aws.bedrock.agent.id"), "agentId")));
   }
 
   @Test
@@ -59,7 +61,7 @@ public abstract class AbstractBedrockAgentClientTest extends AbstractBaseAwsClie
         "AWSBedrockAgent",
         "GetKnowledgeBase",
         "GET",
-        ImmutableMap.of("aws.bedrock.knowledge_base.id", "knowledgeBaseId"));
+        singletonList(equalTo(stringKey("aws.bedrock.knowledge_base.id"), "knowledgeBaseId")));
   }
 
   @Test
@@ -74,11 +76,13 @@ public abstract class AbstractBedrockAgentClientTest extends AbstractBaseAwsClie
                 .withDataSourceId("datasourceId")
                 .withKnowledgeBaseId("knowledgeBaseId"));
 
-    Map<String, String> additionalAttributes =
-        ImmutableMap.of("aws.bedrock.data_source.id", "datasourceId");
-
     assertRequestWithMockedResponse(
-        response, client, "AWSBedrockAgent", "GetDataSource", "GET", additionalAttributes);
+        response,
+        client,
+        "AWSBedrockAgent",
+        "GetDataSource",
+        "GET",
+        singletonList(equalTo(stringKey("aws.bedrock.data_source.id"), "datasourceId")));
   }
 
   private AWSBedrockAgent createClient() {

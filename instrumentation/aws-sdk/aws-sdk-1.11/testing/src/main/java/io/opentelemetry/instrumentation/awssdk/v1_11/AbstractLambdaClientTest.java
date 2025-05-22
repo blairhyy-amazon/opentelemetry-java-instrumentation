@@ -5,15 +5,19 @@
 
 package io.opentelemetry.instrumentation.awssdk.v1_11;
 
+import static io.opentelemetry.api.common.AttributeKey.stringKey;
+import static io.opentelemetry.sdk.testing.assertj.OpenTelemetryAssertions.equalTo;
+import static java.util.Collections.singletonList;
+
 import com.amazonaws.services.lambda.AWSLambda;
 import com.amazonaws.services.lambda.AWSLambdaClientBuilder;
 import com.amazonaws.services.lambda.model.GetEventSourceMappingRequest;
 import com.amazonaws.services.lambda.model.GetFunctionRequest;
-import com.google.common.collect.ImmutableMap;
+import io.opentelemetry.sdk.testing.assertj.AttributeAssertion;
 import io.opentelemetry.testing.internal.armeria.common.HttpResponse;
 import io.opentelemetry.testing.internal.armeria.common.HttpStatus;
 import io.opentelemetry.testing.internal.armeria.common.MediaType;
-import java.util.Map;
+import java.util.List;
 import java.util.function.Function;
 import java.util.stream.Stream;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -32,8 +36,10 @@ public abstract class AbstractLambdaClientTest extends AbstractBaseAwsClientTest
   @ParameterizedTest
   @MethodSource("provideArguments")
   public void testSendRequestWithMockedResponse(
-      String operation, Map<String, String> additionalAttributes,
-      Function<AWSLambda, Object> call) throws Exception {
+      String operation,
+      List<AttributeAssertion> additionalAttributes,
+      Function<AWSLambda, Object> call)
+      throws Exception {
 
     AWSLambdaClientBuilder clientBuilder = AWSLambdaClientBuilder.standard();
 
@@ -54,16 +60,13 @@ public abstract class AbstractLambdaClientTest extends AbstractBaseAwsClientTest
     return Stream.of(
         Arguments.of(
             "GetEventSourceMapping",
-            ImmutableMap.of("aws.lambda.resource_mapping.id", "uuid"),
+            singletonList(equalTo(stringKey("aws.lambda.resource_mapping.id"), "uuid")),
             (Function<AWSLambda, Object>)
-                c -> c.getEventSourceMapping(
-                    new GetEventSourceMappingRequest().withUUID("uuid"))),
-
+                c -> c.getEventSourceMapping(new GetEventSourceMappingRequest().withUUID("uuid"))),
         Arguments.of(
             "GetFunction",
-            ImmutableMap.of("aws.lambda.function.name", "functionName"),
+            singletonList(equalTo(stringKey("aws.lambda.function.name"), "functionName")),
             (Function<AWSLambda, Object>)
-                c -> c.getFunction(
-                    new GetFunctionRequest().withFunctionName("functionName"))));
+                c -> c.getFunction(new GetFunctionRequest().withFunctionName("functionName"))));
   }
 }

@@ -5,8 +5,10 @@
 
 package io.opentelemetry.instrumentation.awssdk.v1_11;
 
+import static io.opentelemetry.api.common.AttributeKey.stringKey;
 import static io.opentelemetry.sdk.testing.assertj.OpenTelemetryAssertions.equalTo;
 import static io.opentelemetry.semconv.incubating.MessagingIncubatingAttributes.MESSAGING_DESTINATION_NAME;
+import static java.util.Arrays.asList;
 import static java.util.Collections.singletonList;
 
 import com.amazonaws.services.sns.AmazonSNS;
@@ -17,12 +19,6 @@ import io.opentelemetry.testing.internal.armeria.common.HttpResponse;
 import io.opentelemetry.testing.internal.armeria.common.HttpStatus;
 import io.opentelemetry.testing.internal.armeria.common.MediaType;
 import java.util.List;
-import java.util.function.Function;
-import java.util.stream.Stream;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.Arguments;
-import org.junit.jupiter.params.provider.MethodSource;
-import java.util.Map;
 import org.junit.jupiter.api.Test;
 
 public abstract class AbstractSnsClientTest extends AbstractBaseAwsClientTest {
@@ -55,9 +51,10 @@ public abstract class AbstractSnsClientTest extends AbstractBaseAwsClientTest {
 
     server.enqueue(HttpResponse.of(HttpStatus.OK, MediaType.PLAIN_TEXT_UTF_8, body));
 
-    Map<String, String> additionalAttributes =
-        ImmutableMap.of(
-            MESSAGING_DESTINATION_NAME.toString(), "somearn", "aws.sns.topic.arn", "somearn");
+    List<AttributeAssertion> additionalAttributes =
+        asList(
+            equalTo(stringKey(MESSAGING_DESTINATION_NAME.getKey()), "somearn"),
+            equalTo(stringKey("aws.sns.topic.arn"), "somearn"));
 
     Object response =
         client.publish(new PublishRequest().withMessage("somemessage").withTopicArn("somearn"));
@@ -88,7 +85,7 @@ public abstract class AbstractSnsClientTest extends AbstractBaseAwsClientTest {
     server.enqueue(HttpResponse.of(HttpStatus.OK, MediaType.PLAIN_TEXT_UTF_8, body));
 
     List<AttributeAssertion> additionalAttributes =
-        singletonList(equalTo(MESSAGING_DESTINATION_NAME, "somearn"));
+        singletonList(equalTo(stringKey(MESSAGING_DESTINATION_NAME.getKey()), "somearn"));
 
     Object response =
         client.publish(new PublishRequest().withMessage("somemessage").withTargetArn("somearn"));

@@ -5,18 +5,22 @@
 
 package io.opentelemetry.instrumentation.awssdk.v1_11;
 
+import static io.opentelemetry.api.common.AttributeKey.stringKey;
+import static io.opentelemetry.sdk.testing.assertj.OpenTelemetryAssertions.equalTo;
+import static java.util.Collections.singletonList;
+
 import com.amazonaws.services.secretsmanager.AWSSecretsManager;
 import com.amazonaws.services.secretsmanager.AWSSecretsManagerClientBuilder;
 import com.amazonaws.services.secretsmanager.model.CreateSecretRequest;
 import io.opentelemetry.testing.internal.armeria.common.HttpResponse;
 import io.opentelemetry.testing.internal.armeria.common.HttpStatus;
 import io.opentelemetry.testing.internal.armeria.common.MediaType;
-import com.google.common.collect.ImmutableMap;
 import org.junit.jupiter.api.Test;
 
 public abstract class AbstractSecretsManagerClientTest extends AbstractBaseAwsClientTest {
 
-  public abstract AWSSecretsManagerClientBuilder configureClient(AWSSecretsManagerClientBuilder client);
+  public abstract AWSSecretsManagerClientBuilder configureClient(
+      AWSSecretsManagerClientBuilder client);
 
   @Override
   protected boolean hasRequestId() {
@@ -40,10 +44,9 @@ public abstract class AbstractSecretsManagerClientTest extends AbstractBaseAwsCl
             + "}";
     server.enqueue(HttpResponse.of(HttpStatus.OK, MediaType.PLAIN_TEXT_UTF_8, body));
 
-    Object response = client.createSecret(
-        new CreateSecretRequest()
-            .withName("secretName")
-            .withSecretString("secretValue"));
+    Object response =
+        client.createSecret(
+            new CreateSecretRequest().withName("secretName").withSecretString("secretValue"));
 
     assertRequestWithMockedResponse(
         response,
@@ -51,8 +54,9 @@ public abstract class AbstractSecretsManagerClientTest extends AbstractBaseAwsCl
         "AWSSecretsManager",
         "CreateSecret",
         "POST",
-        ImmutableMap.of(
-            "aws.secretsmanager.secret.arn",
-            "arn:aws:secretsmanager:us-west-2:123456789012:secret:MyTestDatabaseSecret-a1b2c3"));
+        singletonList(
+            equalTo(
+                stringKey("aws.secretsmanager.secret.arn"),
+                "arn:aws:secretsmanager:us-west-2:123456789012:secret:MyTestDatabaseSecret-a1b2c3")));
   }
 }

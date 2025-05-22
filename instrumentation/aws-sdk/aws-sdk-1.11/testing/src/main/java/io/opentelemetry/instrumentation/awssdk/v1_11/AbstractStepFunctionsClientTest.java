@@ -5,15 +5,19 @@
 
 package io.opentelemetry.instrumentation.awssdk.v1_11;
 
+import static io.opentelemetry.api.common.AttributeKey.stringKey;
+import static io.opentelemetry.sdk.testing.assertj.OpenTelemetryAssertions.equalTo;
+import static java.util.Collections.singletonList;
+
 import com.amazonaws.services.stepfunctions.AWSStepFunctions;
 import com.amazonaws.services.stepfunctions.AWSStepFunctionsClientBuilder;
 import com.amazonaws.services.stepfunctions.model.DescribeActivityRequest;
 import com.amazonaws.services.stepfunctions.model.DescribeStateMachineRequest;
-import com.google.common.collect.ImmutableMap;
+import io.opentelemetry.sdk.testing.assertj.AttributeAssertion;
 import io.opentelemetry.testing.internal.armeria.common.HttpResponse;
 import io.opentelemetry.testing.internal.armeria.common.HttpStatus;
 import io.opentelemetry.testing.internal.armeria.common.MediaType;
-import java.util.Map;
+import java.util.List;
 import java.util.function.Function;
 import java.util.stream.Stream;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -33,8 +37,10 @@ public abstract class AbstractStepFunctionsClientTest extends AbstractBaseAwsCli
   @ParameterizedTest
   @MethodSource("provideArguments")
   public void testSendRequestWithMockedResponse(
-      String operation, Map<String, String> additionalAttributes,
-      Function<AWSStepFunctions, Object> call) throws Exception {
+      String operation,
+      List<AttributeAssertion> additionalAttributes,
+      Function<AWSStepFunctions, Object> call)
+      throws Exception {
 
     AWSStepFunctionsClientBuilder clientBuilder = AWSStepFunctionsClientBuilder.standard();
 
@@ -55,14 +61,15 @@ public abstract class AbstractStepFunctionsClientTest extends AbstractBaseAwsCli
     return Stream.of(
         Arguments.of(
             "DescribeStateMachine",
-            ImmutableMap.of("aws.stepfunctions.state_machine.arn", "stateMachineArn"),
+            singletonList(
+                equalTo(stringKey("aws.stepfunctions.state_machine.arn"), "stateMachineArn")),
             (Function<AWSStepFunctions, Object>)
                 c ->
                     c.describeStateMachine(
                         new DescribeStateMachineRequest().withStateMachineArn("stateMachineArn"))),
         Arguments.of(
             "DescribeActivity",
-            ImmutableMap.of("aws.stepfunctions.activity.arn", "activityArn"),
+            singletonList(equalTo(stringKey("aws.stepfunctions.activity.arn"), "activityArn")),
             (Function<AWSStepFunctions, Object>)
                 c ->
                     c.describeActivity(
