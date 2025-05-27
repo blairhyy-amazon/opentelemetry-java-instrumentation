@@ -52,7 +52,6 @@ public abstract class AbstractKinesisClientTest extends AbstractBaseAwsClientTes
 
   @Test
   public void sendRequestWithStreamArnMockedResponse() throws Exception {
-    // Step 1: Build Kinesis client with your configuration
     AmazonKinesisClientBuilder clientBuilder = AmazonKinesisClientBuilder.standard();
     AmazonKinesis client =
         configureClient(clientBuilder)
@@ -60,33 +59,29 @@ public abstract class AbstractKinesisClientTest extends AbstractBaseAwsClientTes
             .withCredentials(credentialsProvider)
             .build();
 
-    // Step 2: Mock JSON response from DescribeStream with a StreamARN
-    String body = "{\n" +
-        "  \"StreamDescription\": {\n" +
-        "    \"StreamARN\": \"arn:aws:kinesis:us-east-1:123456789012:stream/somestream\",\n" +
-        "    \"StreamName\": \"somestream\",\n" +
-        "    \"StreamStatus\": \"ACTIVE\",\n" +
-        "    \"Shards\": []\n" +
-        "  }\n" +
-        "}";
+    String body =
+        "{\n"
+            + "\"StreamDescription\": {\n"
+            + "\"StreamARN\": \"arn:aws:kinesis:us-east-1:123456789012:stream/somestream\",\n"
+            + "\"StreamName\": \"somestream\",\n"
+            + "\"StreamStatus\": \"ACTIVE\",\n"
+            + "\"Shards\": []\n"
+            + "}\n"
+            + "}";
 
     server.enqueue(HttpResponse.of(HttpStatus.OK, MediaType.JSON_UTF_8, body));
 
-    // Step 3: Expected attributes to be asserted, including the stream ARN
-    Map<String, String> additionalAttributes = ImmutableMap.of(
-        "aws.stream.name", "somestream",
-        "aws.stream.arn", "arn:aws:kinesis:us-east-1:123456789012:stream/somestream"
-    );
+    Map<String, String> additionalAttributes =
+        ImmutableMap.of(
+            "aws.stream.name", "somestream",
+            "aws.stream.arn", "arn:aws:kinesis:us-east-1:123456789012:stream/somestream");
 
-    // Step 4: Make the actual call to DescribeStream
-    Object response = client.describeStream(
-        new DescribeStreamRequest().withStreamName("somestream"));
+    Object response =
+        client.describeStream(new DescribeStreamRequest().withStreamName("somestream"));
 
-    // Step 5: Run standard request assertion
     assertRequestWithMockedResponse(
         response, client, "Kinesis", "DescribeStream", "POST", additionalAttributes);
   }
-
 
   private static Stream<Arguments> provideArguments() {
     return Stream.of(

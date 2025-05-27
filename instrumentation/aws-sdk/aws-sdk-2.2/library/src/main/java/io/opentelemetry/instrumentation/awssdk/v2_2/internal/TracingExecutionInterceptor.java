@@ -269,8 +269,10 @@ public final class TracingExecutionInterceptor implements ExecutionInterceptor {
     executionAttributes.putAttribute(SDK_HTTP_REQUEST_ATTRIBUTE, httpRequest);
 
     if (captureExperimentalSpanAttributes) {
-      AwsCredentials credentials = executionAttributes.getAttribute(AwsSignerExecutionAttribute.AWS_CREDENTIALS);
-      Region signingRegion = executionAttributes.getAttribute(AwsSignerExecutionAttribute.SIGNING_REGION);
+      AwsCredentials credentials =
+          executionAttributes.getAttribute(AwsSignerExecutionAttribute.AWS_CREDENTIALS);
+      Region signingRegion =
+          executionAttributes.getAttribute(AwsSignerExecutionAttribute.SIGNING_REGION);
       Span span = Span.fromContext(otelContext);
 
       if (credentials != null) {
