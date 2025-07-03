@@ -26,7 +26,6 @@ import software.amazon.awssdk.regions.Region
 import software.amazon.awssdk.services.ec2.Ec2AsyncClient
 import software.amazon.awssdk.services.ec2.Ec2Client
 import software.amazon.awssdk.services.kinesis.KinesisClient
-import software.amazon.awssdk.services.kinesis.model.DescribeStreamRequest
 import software.amazon.awssdk.services.kinesis.model.DeleteStreamRequest
 import software.amazon.awssdk.services.rds.RdsAsyncClient
 import software.amazon.awssdk.services.rds.RdsClient
