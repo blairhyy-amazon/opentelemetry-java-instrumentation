@@ -11,7 +11,6 @@ import static io.opentelemetry.semconv.incubating.AwsIncubatingAttributes.AWS_DY
 import static io.opentelemetry.semconv.incubating.DbIncubatingAttributes.DB_SYSTEM;
 import static io.opentelemetry.semconv.incubating.DbIncubatingAttributes.DbSystemIncubatingValues.DYNAMODB;
 import static java.util.Collections.singletonList;
-
 import static org.junit.Assert.assertEquals;
 
 import com.amazonaws.services.dynamodbv2.AmazonDynamoDB;

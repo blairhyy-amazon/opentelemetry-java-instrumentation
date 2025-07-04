@@ -81,7 +81,9 @@ public abstract class AbstractKinesisClientTest extends AbstractBaseAwsClientTes
     List<AttributeAssertion> additionalAttributes =
         Arrays.asList(
             equalTo(stringKey("aws.stream.name"), "somestream"),
-            equalTo(stringKey("aws.stream.arn"), "arn:aws:kinesis:us-east-1:123456789012:stream/somestream"));
+            equalTo(
+                stringKey("aws.stream.arn"),
+                "arn:aws:kinesis:us-east-1:123456789012:stream/somestream"));
 
     Object response =
         client.describeStream(new DescribeStreamRequest().withStreamName("somestream"));
