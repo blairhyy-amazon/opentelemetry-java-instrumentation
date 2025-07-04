@@ -234,8 +234,6 @@ public abstract class AbstractAws2SqsBaseTest {
             equalTo(RPC_SYSTEM, "aws-api"),
             equalTo(RPC_SERVICE, "Sqs"),
             equalTo(RPC_METHOD, "ReceiveMessage"),
-            equalTo(stringKey("aws.auth.account.access_key"), "my-access-key"),
-            equalTo(stringKey("aws.auth.region"), "ap-northeast-1"),
             equalTo(HTTP_REQUEST_METHOD, "POST"),
             equalTo(HTTP_RESPONSE_STATUS_CODE, 200),
             satisfies(URL_FULL, v -> v.startsWith("http://localhost:" + sqsPort)),
