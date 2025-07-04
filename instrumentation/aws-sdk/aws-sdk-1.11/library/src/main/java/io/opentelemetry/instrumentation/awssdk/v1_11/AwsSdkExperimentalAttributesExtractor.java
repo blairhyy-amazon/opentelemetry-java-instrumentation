@@ -54,6 +54,8 @@ class AwsSdkExperimentalAttributesExtractor
   private static final String BEDROCK_AGENT_SERVICE = "AWSBedrockAgent";
   private static final String BEDROCK_AGENT_RUNTIME_SERVICE = "AWSBedrockAgentRuntime";
   private static final String BEDROCK_RUNTIME_SERVICE = "AmazonBedrockRuntime";
+  private static final HandlerContextKey<AWSCredentials> AWS_CREDENTIALS =
+      new HandlerContextKey<AWSCredentials>("AWSCredentials");
 
   @Override
   public void onStart(AttributesBuilder attributes, Context parentContext, Request<?> request) {
@@ -62,8 +64,7 @@ class AwsSdkExperimentalAttributesExtractor
 
     Object originalRequest = request.getOriginalRequest();
     String requestClassName = originalRequest.getClass().getSimpleName();
-
-    AWSCredentials credentials = request.getHandlerContext(HandlerContextKey.AWS_CREDENTIALS);
+    AWSCredentials credentials = request.getHandlerContext(AWS_CREDENTIALS);
     if (credentials != null) {
       String accessKeyId = credentials.getAWSAccessKeyId();
       if (accessKeyId != null) {
